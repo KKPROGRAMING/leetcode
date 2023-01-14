@@ -18,48 +18,25 @@
  * @return {TreeNode}
  */
 var sortedArrayToBST = function (nums) {
-  if (nums === []) {
-    return null;
-  }
-  let index = Math.round((nums.length - 1) / 2);
-  let res = new TreeNode(nums[index]);
-  let check = new Array(nums.length);
-
-  function dichotomy(start, end, node, index) {
-    if (start < end) {
-      let left_ = Math.round((3 * start + end) / 4);
-      let right_ = Math.round((3 * end + start) / 4);
-
-      if (left_ === index || right_ === index) {
-        if (check[left_] === 0) {
-          let left_n = new TreeNode(nums[left_]);
-          node.left = lef;
-          check[left_] = 1;
-          dichotomy(start, Math.round((start + end) / 2) - 1, left_n, left_);
-        }
-        if (check[right_] === 0) {
-          let right_n = new TreeNode(nums[right_]);
-          node.right = right_n;
-          check[right_] = 1;
-          dichotomy(Math.round((start + end) / 2) + 1, end, right_n, right_);
-        }
-        if (check[left_] !== 0 || check[right_] !== 0) {
-          return;
-        }
+  function dichotomy(start, end) {
+    if (start === end) {
+      return new TreeNode(nums[start], null, null);
+    } else {
+      if ((end - start) % 2 !== 0) {
+        return new TreeNode(
+          nums[(start + end - 1) / 2],
+          dichotomy(start, (start + end - 3) / 2),
+          dichotomy((start + end + 1) / 2, end)
+        );
       } else {
-        let left_n = new TreeNode(nums[left_]);
-        node.left = left_n;
-        let right_n = new TreeNode(nums[right_]);
-        node.right = right_n;
-        check[left_] = 1;
-        check[right_] = 1;
-
-        dichotomy(start, Math.round((start + end) / 2) - 1, left_n, left_);
-        dichotomy(Math.round((start + end) / 2) + 1, end, right_n, right_);
+        return new TreeNode(
+          nums[(start + end) / 2],
+          dichotomy(start, (start + end - 2) / 2),
+          dichotomy((start + end + 2) / 2, end)
+        );
       }
     }
   }
-  dichotomy(0, nums.length - 1, res, index);
-  return res;
+  return dichotomy(0, nums.length - 1);
 };
 // @lc code=end
