@@ -18,25 +18,34 @@
  * @return {TreeNode}
  */
 var sortedArrayToBST = function (nums) {
-  function dichotomy(start, end) {
-    if (start === end) {
-      return new TreeNode(nums[start], null, null);
-    } else {
-      if ((end - start) % 2 !== 0) {
-        return new TreeNode(
-          nums[(start + end - 1) / 2],
-          dichotomy(start, (start + end - 3) / 2),
-          dichotomy((start + end + 1) / 2, end)
-        );
-      } else {
-        return new TreeNode(
-          nums[(start + end) / 2],
-          dichotomy(start, (start + end - 2) / 2),
-          dichotomy((start + end + 2) / 2, end)
-        );
-      }
+  let root_index =
+    (nums.length - 1) % 2 !== 0 ? (nums.length - 2) / 2 : (nums.length - 1) / 2;
+  let root = new TreeNode(nums[root_index]);
+
+  function dichotomy(index_s, index_e, index_m, node) {
+    if (index_s !== index_e) {
+      let left_end = index_m - 1;
+      let left_middle =
+        (left_end - index_s) % 2 !== 0
+          ? (index_s + left_end - 1) / 2
+          : (index_s + left_end) / 2;
+
+      let right_start = index_m + 1;
+      let right_middle = (index_e - right_start) % 2 !== 0
+      ? (right_start + index_e - 1) / 2
+      : (right_start + index_e) / 2;
+
+      let node_l = new TreeNode(nums[left_middle]);
+      node.left = node_l;
+      let node_r = new TreeNode(nums[right_middle]);
+      node.right = node_r;
+
+      dichotomy(index_s, left_end, left_middle, node_l);
+      dichotomy(right_start, index_e, right_middle, node_r);
     }
   }
-  return dichotomy(0, nums.length - 1);
+
+  dichotomy(0, nums.length - 1, root_index, root);
+  return root;
 };
 // @lc code=end
